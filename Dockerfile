@@ -1,23 +1,20 @@
-FROM ubuntu:latest
+FROM alpine:latest
 
-ENV DEBIAN_FRONTEND=noninteractive
+RUN sed -i 's/https/http/' /etc/apk/repositories
 
-RUN dpkg --add-architecture i386 \
-    && apt-get update \
-    && apt-get install -y wget mono-complete gnupg2 unzip software-properties-common file
+RUN apk add --update --no-cache ca-certificates tzdata
 
-RUN wget -nc https://dl.winehq.org/wine-builds/winehq.key \
-    && apt-key add winehq.key \
-    && apt-add-repository 'deb https://dl.winehq.org/wine-builds/ubuntu/ focal main' \
-    && apt-get update \
-    && apt-get install -y --install-recommends winehq-stable 
+# Install wine and wget
+RUN apk update \
+    && apk add --update --no-cache wine \
+    && apk add --update --no-cache winetricks --repository=http://dl-cdn.alpinelinux.org/alpine/edge/testing/ \
+    && apk add --update --no-cache wget \
+    && apk add --update --no-cache unzip \
+    && apk add --update --no-cache bash \
+    && apk add --update --no-cache grep \
+    && apk add --update --no-cache gnupg
 
-RUN wget https://raw.githubusercontent.com/Winetricks/winetricks/master/src/winetricks \
-    && chmod +x winetricks \
-    && mv winetricks /usr/local/bin \
-    && /usr/local/bin/winetricks --self-update
-
-RUN /usr/local/bin/winetricks -q dotnet48
+RUN winetricks -q dotnet48
 
 ADD https://api.github.com/repos/pwntester/ysoserial.net/releases/latest latest_release.json
 RUN wget $(wget -q -O - https://api.github.com/repos/pwntester/ysoserial.net/releases/latest | grep -oP '(?<="browser_download_url": ").*ysoserial-.*\.zip') -O ysoserial.zip \

